@@ -1,0 +1,97 @@
+erDiagram
+    USERS {
+        int user_id PK
+        string username
+        string email
+        string first_name
+        string last_name_1
+        boolean active
+    }
+
+    PRO_PROFILES {
+        int pro_profile_id PK
+        int user_id FK
+        string display_name
+        string bio
+        string phone_contact
+        boolean visible
+        boolean verified
+    }
+
+    SERVICES {
+        int service_id PK
+        int pro_profile_id FK
+        string service_name
+        int duration_min
+        decimal base_price
+        string currency_code
+        boolean active
+    }
+
+    SCHEDULES {
+        int schedule_id PK
+        int pro_profile_id FK
+        int weekday
+        time start_time
+        time end_time
+        int slot_duration_min
+        boolean active
+    }
+
+    BOOKINGS {
+        int booking_id PK
+        int client_user_id FK
+        int pro_profile_id FK
+        int service_id FK
+        datetime booking_start
+        string status
+        decimal price_total
+        datetime payment_deadline
+    }
+
+    PAYMENTS {
+        int payment_id PK
+        int booking_id FK
+        int invoice_id FK
+        decimal amount
+        string payment_method
+        string status
+        datetime paid_at
+    }
+
+    INVOICES {
+        int invoice_id PK
+        int booking_id FK
+        int billing_detail_id FK
+        string invoice_number
+        string invoice_series
+        decimal total_amount
+        string status
+        datetime created_at
+    }
+
+    BILLING_DETAILS {
+        int billing_detail_id PK
+        int user_id FK
+        string legal_name
+        string tax_id
+        string address_line_1
+        string city
+        string country_code
+        boolean is_default
+    }
+
+    USERS ||--o{ PRO_PROFILES : has
+    USERS ||--o{ BOOKINGS : makes
+    USERS ||--o{ BILLING_DETAILS : owns
+
+    PRO_PROFILES ||--o{ SERVICES : offers
+    PRO_PROFILES ||--o{ SCHEDULES : defines
+    PRO_PROFILES ||--o{ BOOKINGS : receives
+
+    SERVICES ||--o{ BOOKINGS : is_booked_in
+
+    BOOKINGS ||--o{ PAYMENTS : generates
+    BOOKINGS ||--o| INVOICES : may_generate
+
+    BILLING_DETAILS ||--o{ INVOICES : used_for

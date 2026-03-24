@@ -1,95 +1,93 @@
-classDiagram
-    class Usuario {
-        +idUsuario : int
-        +nombre : string
-        +email : string
-        +telefono : string
-        +passwordHash : string
-        +activo : boolean
+erDiagram
+    USERS {
+        int user_id PK
+        string username
+        string email
     }
 
-    class PerfilProfesional {
-        +idPerfilProfesional : int
-        +nombreMarca : string
-        +descripcionBreve : string
-        +emailContactoPublico : string
-        +telefonoPublico : string
-        +direccionProfesional : string
-        +logo : string
-        +visible : boolean
-        +verificado : boolean
-        +estado : string
+    PRO_PROFILES {
+        int pro_profile_id PK
+        int user_id FK
+        string display_name
+        string status
     }
 
-    class Servicio {
-        +idServicio : int
-        +nombre : string
-        +descripcion : string
-        +duracionMinutos : int
-        +modalidad : string
-        +precioBase : decimal
-        +activo : boolean
+    SERVICES {
+        int service_id PK
+        int pro_profile_id FK
+        string service_name
+        int duration_min
+        decimal base_price
+        decimal tax_rate
+        boolean tax_exempt
     }
 
-    class Disponibilidad {
-        +idDisponibilidad : int
-        +diaSemana : int
-        +horaInicio : time
-        +horaFin : time
-        +duracionSlotMin : int
-        +activo : boolean
+    SCHEDULES {
+        int schedule_id PK
+        int pro_profile_id FK
+        int weekday
+        time start_time
+        time end_time
     }
 
-    class Cita {
-        +idCita : int
-        +fechaHoraInicio : datetime
-        +duracionMinutos : int
-        +estado : string
-        +precioTotal : decimal
-        +fechaLimitePago : datetime
-        +notasInternas : string
-        +enlaceZoom : string
+    BOOKINGS {
+        int booking_id PK
+        int client_user_id FK
+        int pro_profile_id FK
+        int service_id FK
+        datetime booking_start
+        datetime booking_end
+        decimal price_total
+        string status
+        datetime payment_deadline
     }
 
-    class Pago {
-        +idPago : int
-        +importe : decimal
-        +metodoPago : string
-        +estado : string
-        +fechaPago : datetime
-        +referenciaPasarela : string
+    PAYMENTS {
+        int payment_id PK
+        int booking_id FK
+        int invoice_id FK
+        decimal amount
+        string payment_method
+        string status
+        string receipt_number
     }
 
-    class Factura {
-        +idFactura : int
-        +numeroFactura : string
-        +serieFactura : string
-        +importeTotal : decimal
-        +estado : string
-        +fechaEmision : datetime
-        +rutaPdf : string
+    INVOICES {
+        int invoice_id PK
+        int booking_id FK
+        int billing_detail_id FK
+        string invoice_type
+        decimal total_amount
+        string status
+        boolean is_reversal
+        int reverses_invoice_id FK
+        int replaces_invoice_id FK
     }
 
-    class DatosFacturacion {
-        +idDatosFacturacion : int
-        +nombreLegal : string
-        +nifCif : string
-        +direccionLinea1 : string
-        +ciudad : string
-        +codigoPostal : string
-        +pais : string
-        +esPredeterminado : boolean
+    BILLING_DETAILS {
+        int billing_detail_id PK
+        int user_id FK
+        string legal_name
+        string tax_id
+        string country_code
     }
 
-    Usuario "1" --> "0..1" PerfilProfesional : puede_tener
-    Usuario "1" --> "0..*" DatosFacturacion : registra
-    Usuario "1" --> "0..*" Cita : reserva_como_cliente
+    USERS ||--o| PRO_PROFILES : has
+    USERS ||--o{ BILLING_DETAILS : has
+    USERS ||--o{ BOOKINGS : makes
 
-    PerfilProfesional "1" --> "0..*" Servicio : ofrece
-    PerfilProfesional "1" --> "0..*" Disponibilidad : define
-    PerfilProfesional "1" --> "0..*" Cita : recibe
+    PRO_PROFILES ||--o{ SERVICES : offers
+    PRO_PROFILES ||--o{ SCHEDULES : defines
+    PRO_PROFILES ||--o{ BOOKINGS : receives
 
-    Servicio "1" --> "0..*" Cita : corresponde_a
-    Cita "1" --> "0..*" Pago : genera
-    Cita "1" --> "0..1" Factura : puede_generar
-    DatosFacturacion "1" --> "0..*" Factura : se_usa_en
+    SERVICES ||--o{ BOOKINGS : booked_in
+
+    BOOKINGS ||--o{ PAYMENTS : has
+    BOOKINGS ||--o{ INVOICES : has
+
+    PAYMENTS }o--o| INVOICES : links_to
+
+    BILLING_DETAILS ||--o{ INVOICES : used_in
+
+    INVOICES ||--o| INVOICES : reverses
+    INVOICES ||--o| INVOICES : replaces

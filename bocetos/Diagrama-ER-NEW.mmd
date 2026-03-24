@@ -81,17 +81,17 @@ erDiagram
         boolean is_default
     }
 
-    USERS ||--o{ PRO_PROFILES : has
-    USERS ||--o{ BOOKINGS : makes
-    USERS ||--o{ BILLING_DETAILS : owns
+    USERS ||--o{ PRO_PROFILES : TIENE
+    USERS ||--o{ BOOKINGS : HACE
+    USERS ||--o{ BILLING_DETAILS : TIENE
 
-    PRO_PROFILES ||--o{ SERVICES : offers
-    PRO_PROFILES ||--o{ SCHEDULES : defines
-    PRO_PROFILES ||--o{ BOOKINGS : receives
+    PRO_PROFILES ||--o{ SERVICES : OFRECE
+    PRO_PROFILES ||--o{ SCHEDULES : DEFINE
+    PRO_PROFILES ||--o{ BOOKINGS : RECIBE
 
-    SERVICES ||--o{ BOOKINGS : is_booked_in
+    SERVICES ||--o{ BOOKINGS : SE_RESERVA_EN
 
-    BOOKINGS ||--o{ PAYMENTS : generates
-    BOOKINGS ||--o| INVOICES : may_generate
+    BOOKINGS ||--o{ PAYMENTS : GENERA
+    BOOKINGS ||--o| INVOICES : PUEDE_GENERAR
 
-    BILLING_DETAILS ||--o{ INVOICES : used_for
+    BILLING_DETAILS ||--o{ INVOICES : SE_USA_EN

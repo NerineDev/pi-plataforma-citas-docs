@@ -1,0 +1,167 @@
+erDiagram
+    USERS {
+        int user_id PK
+        uuid public_uuid
+        string username
+        string first_name
+        string last_name_1
+        string email
+        string lang_pref
+        boolean active
+    }
+
+    AUTH_ACCOUNTS {
+        int auth_account_id PK
+        int user_id FK
+        string provider
+        string email_login
+        string password_hash
+        boolean active
+    }
+
+    ROLES {
+        int role_id PK
+        string role_name
+        boolean active
+    }
+
+    USER_ROLES {
+        int user_id FK
+        int role_id FK
+        boolean active
+        datetime assigned_at
+    }
+
+    PRO_PROFILES {
+        int pro_profile_id PK
+        int user_id FK
+        string display_name
+        string phone_contact
+        string location_text
+        boolean visible
+        boolean verified
+        string status
+    }
+
+    BILLING_DETAILS {
+        int billing_detail_id PK
+        int user_id FK
+        string legal_name
+        string tax_id
+        string city
+        string country_code
+        boolean is_default
+    }
+
+    SERVICES {
+        int service_id PK
+        int pro_profile_id FK
+        string service_name
+        int duration_min
+        decimal base_price
+        decimal tax_rate
+        boolean tax_exempt
+        boolean active
+    }
+
+    SCHEDULES {
+        int schedule_id PK
+        int pro_profile_id FK
+        int weekday
+        time start_time
+        time end_time
+        boolean active
+    }
+
+    BOOKINGS {
+        int booking_id PK
+        int client_user_id FK
+        int pro_profile_id FK
+        int service_id FK
+        datetime booking_start
+        datetime booking_end
+        decimal price_total
+        string status
+        datetime payment_deadline
+    }
+
+    BOOKING_HISTORY {
+        int booking_history_id PK
+        int booking_id FK
+        string status
+        datetime changed_at
+    }
+
+    PAYMENTS {
+        int payment_id PK
+        int booking_id FK
+        int invoice_id FK
+        decimal amount
+        string payment_method
+        string status
+        string receipt_number
+    }
+
+    INVOICES {
+        int invoice_id PK
+        int booking_id FK
+        int billing_detail_id FK
+        string invoice_number
+        string invoice_type
+        decimal total_amount
+        string status
+        boolean is_reversal
+        int reverses_invoice_id FK
+        int replaces_invoice_id FK
+    }
+
+    THREADS {
+        int thread_id PK
+        int user_id FK
+        int pro_id FK
+        int booking_id FK
+        string status
+    }
+
+    MESSAGES {
+        int message_id PK
+        int thread_id FK
+        int sender_id FK
+        datetime sent_at
+        boolean active
+    }
+
+    SUPPORT_TICKETS {
+        int ticket_id PK
+        int user_id FK
+        string subject
+        string status
+        boolean active
+    }
+
+    USERS ||--o{ AUTH_ACCOUNTS : accede_con
+    USERS ||--o{ USER_ROLES : posee
+    ROLES ||--o{ USER_ROLES : asigna
+
+    USERS ||--o| PRO_PROFILES : puede_tener
+    USERS ||--o{ BILLING_DETAILS : registra
+    USERS ||--o{ BOOKINGS : realiza
+    USERS ||--o{ THREADS : inicia
+    USERS ||--o{ MESSAGES : envia
+    USERS ||--o{ SUPPORT_TICKETS : abre
+
+    PRO_PROFILES ||--o{ SERVICES : ofrece
+    PRO_PROFILES ||--o{ SCHEDULES : define
+    PRO_PROFILES ||--o{ BOOKINGS : recibe
+    PRO_PROFILES ||--o{ THREADS : participa
+
+    SERVICES ||--o{ BOOKINGS : se_reserva_en
+    BOOKINGS ||--o{ BOOKING_HISTORY : genera
+    BOOKINGS ||--o{ PAYMENTS : genera
+    BOOKINGS ||--o{ INVOICES : origina
+    BOOKINGS ||--o{ THREADS : puede_relacionar
+
+    PAYMENTS }o--o| INVOICES : se_vincula_con
+    BILLING_DETAILS ||--o{ INVOICES : se_usa_en
+
+    THREADS ||--o{ MESSAGES : contiene

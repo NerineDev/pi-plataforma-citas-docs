@@ -1,0 +1,52 @@
+erDiagram
+    USERS {
+        int user_id PK
+        string username
+        string email
+    }
+
+    PRO_PROFILES {
+        int pro_profile_id PK
+        int user_id FK
+        string display_name
+        string status
+    }
+
+    SERVICES {
+        int service_id PK
+        int pro_profile_id FK
+        string service_name
+        int duration_min
+        decimal base_price
+        decimal tax_rate
+        boolean tax_exempt
+    }
+
+    SCHEDULES {
+        int schedule_id PK
+        int pro_profile_id FK
+        int weekday
+        time start_time
+        time end_time
+    }
+
+    BOOKINGS {
+        int booking_id PK
+        int client_user_id FK
+        int pro_profile_id FK
+        int service_id FK
+        datetime booking_start
+        datetime booking_end
+        decimal price_total
+        string status
+        datetime payment_deadline
+    }
+
+    USERS ||--o| PRO_PROFILES : tiene
+    USERS ||--o{ BOOKINGS : realiza
+
+    PRO_PROFILES ||--o{ SERVICES : ofrece
+    PRO_PROFILES ||--o{ SCHEDULES : define
+    PRO_PROFILES ||--o{ BOOKINGS : recibe
+
+    SERVICES ||--o{ BOOKINGS : se_reserva_en

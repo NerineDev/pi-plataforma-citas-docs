@@ -1,93 +1,102 @@
-erDiagram
-    USERS {
-        int user_id PK
-        string username
-        string email
+classDiagram
+    class Usuario {
+        +idUsuario: int
+        +username: string
+        +email: string
+        +idiomaPreferido: string
+        +activo: boolean
     }
 
-    PRO_PROFILES {
-        int pro_profile_id PK
-        int user_id FK
-        string display_name
-        string status
+    class PerfilProfesional {
+        +idPerfil: int
+        +nombreVisible: string
+        +bio: string
+        +telefonoContacto: string
+        +ubicacion: string
+        +visible: boolean
+        +verificado: boolean
+        +estado: string
     }
 
-    SERVICES {
-        int service_id PK
-        int pro_profile_id FK
-        string service_name
-        int duration_min
-        decimal base_price
-        decimal tax_rate
-        boolean tax_exempt
+    class Servicio {
+        +idServicio: int
+        +nombre: string
+        +duracionMin: int
+        +precioBase: decimal
+        +taxRate: decimal
+        +taxExempt: boolean
+        +activo: boolean
     }
 
-    SCHEDULES {
-        int schedule_id PK
-        int pro_profile_id FK
-        int weekday
-        time start_time
-        time end_time
+    class Disponibilidad {
+        +idDisponibilidad: int
+        +diaSemana: int
+        +horaInicio: time
+        +horaFin: time
+        +activa: boolean
     }
 
-    BOOKINGS {
-        int booking_id PK
-        int client_user_id FK
-        int pro_profile_id FK
-        int service_id FK
-        datetime booking_start
-        datetime booking_end
-        decimal price_total
-        string status
-        datetime payment_deadline
+    class Reserva {
+        +idReserva: int
+        +inicio: datetime
+        +fin: datetime
+        +precioTotal: decimal
+        +estado: string
+        +paymentDeadline: datetime
+        +notas: string
+        +confirmar()
+        +modificar()
+        +cancelar()
     }
 
-    PAYMENTS {
-        int payment_id PK
-        int booking_id FK
-        int invoice_id FK
-        decimal amount
-        string payment_method
-        string status
-        string receipt_number
+    class Pago {
+        +idPago: int
+        +importe: decimal
+        +metodo: string
+        +estado: string
+        +fechaPago: datetime
+        +referenciaTransaccion: string
+        +numeroRecibo: string
+        +registrarPago()
+        +marcarFallido()
+        +marcarReembolsado()
     }
 
-    INVOICES {
-        int invoice_id PK
-        int booking_id FK
-        int billing_detail_id FK
-        string invoice_type
-        decimal total_amount
-        string status
-        boolean is_reversal
-        int reverses_invoice_id FK
-        int replaces_invoice_id FK
+    class Factura {
+        +idFactura: int
+        +numeroFactura: string
+        +tipoFactura: string
+        +subtotal: decimal
+        +impuestos: decimal
+        +total: decimal
+        +estado: string
+        +esReversion: boolean
+        +motivoCorreccion: string
+        +fechaEmision: datetime
+        +generar()
+        +revertir()
+        +sustituir()
     }
 
-    BILLING_DETAILS {
-        int billing_detail_id PK
-        int user_id FK
-        string legal_name
-        string tax_id
-        string country_code
+    class DatosFacturacion {
+        +idDatosFacturacion: int
+        +razonSocial: string
+        +nifCif: string
+        +direccion: string
+        +ciudad: string
+        +pais: string
+        +esPredeterminado: boolean
     }
 
-    USERS ||--o| PRO_PROFILES : tiene
-    USERS ||--o{ BILLING_DETAILS : tiene
-    USERS ||--o{ BOOKINGS : realiza
-
-    PRO_PROFILES ||--o{ SERVICES : ofrece
-    PRO_PROFILES ||--o{ SCHEDULES : define
-    PRO_PROFILES ||--o{ BOOKINGS : recibe
-
-    SERVICES ||--o{ BOOKINGS : se_reserva_en
-
-    BOOKINGS ||--o{ PAYMENTS : tiene
-    BOOKINGS ||--o{ INVOICES : tiene
-
-    PAYMENTS }o--o| INVOICES : se_vincula_con
-
-    BILLING_DETAILS ||--o{ INVOICES : se_usa_en
-
-    INVOICES ||--o| INVOICES : revierte
-    INVOICES ||--o| INVOICES : reemplaza
+    Usuario "1" --> "0..1" PerfilProfesional : puede tener
+    Usuario "1" --> "0..*" DatosFacturacion : registra
+    PerfilProfesional "1" --> "0..*" Servicio : ofrece
+    PerfilProfesional "1" --> "0..*" Disponibilidad : define
+    Usuario "1" --> "0..*" Reserva : realiza
+    PerfilProfesional "1" --> "0..*" Reserva : recibe
+    Servicio "1" --> "0..*" Reserva : se reserva en
+    Reserva "1" --> "0..*" Pago : genera
+    Reserva "1" --> "0..*" Factura : origina
+    Pago "0..*" --> "0..1" Factura : se vincula con
+    DatosFacturacion "1" --> "0..*" Factura : se usa en
+    Factura "0..1" --> "0..*" Factura : corrige

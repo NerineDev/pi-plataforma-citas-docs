@@ -1,57 +1,55 @@
 classDiagram
-    class Usuario {
-        +idUsuario: int
-        +username: string
-        +email: string
-        +idiomaPreferido: string
-        +activo: boolean
-    }
+class Usuario {
+  +idUsuario: int
+  +username: string
+  +email: string
+  +idiomaPreferido: string
+  +activo: boolean
+}
 
-    class PerfilProfesional {
-        +idPerfil: int
-        +nombreVisible: string
-        +bio: string
-        +telefonoContacto: string
-        +ubicacion: string
-        +visible: boolean
-        +verificado: boolean
-        +estado: string
-    }
+class PerfilProfesional {
+  +idPerfil: int
+  +nombreVisible: string
+  +bio: string
+  +telefonoContacto: string
+  +ubicacion: string
+  +visible: boolean
+  +verificado: boolean
+  +estado: string
+}
 
-    class Servicio {
-        +idServicio: int
-        +nombre: string
-        +duracionMin: int
-        +precioBase: decimal
-        +taxRate: decimal
-        +taxExempt: boolean
-        +activo: boolean
-    }
+class Disponibilidad {
+  +idDisponibilidad: int
+  +diaSemana: int
+  +horaInicio: time
+  +horaFin: time
+  +activa: boolean
+}
 
-    class Disponibilidad {
-        +idDisponibilidad: int
-        +diaSemana: int
-        +horaInicio: time
-        +horaFin: time
-        +activa: boolean
-    }
+class Servicio {
+  +idServicio: int
+  +nombre: string
+  +duracionMin: int
+  +precioBase: decimal
+  +activo: boolean
+}
 
-    class Reserva {
-        +idReserva: int
-        +inicio: datetime
-        +fin: datetime
-        +precioTotal: decimal
-        +estado: string
-        +paymentDeadline: datetime
-        +notas: string
-        +confirmar()
-        +modificar()
-        +cancelar()
-    }
+class Reserva {
+  +idReserva: int
+  +inicio: datetime
+  +fin: datetime
+  +precioTotal: decimal
+  +estado: string
+  +paymentDeadline: datetime
+  +notas: string
+  +confirmar()
+  +modificar()
+  +cancelar()
+}
 
-    Usuario "1" --> "0..1" PerfilProfesional : puede tener
-    PerfilProfesional "1" --> "0..*" Servicio : ofrece
-    PerfilProfesional "1" --> "0..*" Disponibilidad : define
-    Usuario "1" --> "0..*" Reserva : realiza
-    PerfilProfesional "1" --> "0..*" Reserva : recibe
-    Servicio "1" --> "0..*" Reserva : se reserva en
+Usuario "1" --> "0..*" Reserva : realiza
+Usuario "1" --> "0..1" PerfilProfesional : puede tener
+PerfilProfesional "1" --> "0..*" Disponibilidad : define
+PerfilProfesional "1" --> "0..*" Servicio : ofrece
+PerfilProfesional "1" --> "0..*" Reserva : recibe
+Servicio "1" --> "0..*" Reserva : se reserva en

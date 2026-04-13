@@ -1,102 +1,106 @@
 classDiagram
-    class Usuario {
-        +idUsuario: int
-        +username: string
-        +email: string
-        +idiomaPreferido: string
-        +activo: boolean
-    }
+class Usuario {
+  +idUsuario: int
+  +username: string
+  +email: string
+  +idiomaPreferido: string
+  +activo: boolean
+}
 
-    class PerfilProfesional {
-        +idPerfil: int
-        +nombreVisible: string
-        +bio: string
-        +telefonoContacto: string
-        +ubicacion: string
-        +visible: boolean
-        +verificado: boolean
-        +estado: string
-    }
+class PerfilProfesional {
+  +idPerfil: int
+  +nombreVisible: string
+  +bio: string
+  +telefonoContacto: string
+  +ubicacion: string
+  +visible: boolean
+  +verificado: boolean
+  +estado: string
+}
 
-    class Servicio {
-        +idServicio: int
-        +nombre: string
-        +duracionMin: int
-        +precioBase: decimal
-        +taxRate: decimal
-        +taxExempt: boolean
-        +activo: boolean
-    }
+class Disponibilidad {
+  +idDisponibilidad: int
+  +diaSemana: int
+  +horaInicio: time
+  +horaFin: time
+  +activa: boolean
+}
 
-    class Disponibilidad {
-        +idDisponibilidad: int
-        +diaSemana: int
-        +horaInicio: time
-        +horaFin: time
-        +activa: boolean
-    }
+class Servicio {
+  +idServicio: int
+  +nombre: string
+  +duracionMin: int
+  +precioBase: decimal
+  +activo: boolean
+}
 
-    class Reserva {
-        +idReserva: int
-        +inicio: datetime
-        +fin: datetime
-        +precioTotal: decimal
-        +estado: string
-        +paymentDeadline: datetime
-        +notas: string
-        +confirmar()
-        +modificar()
-        +cancelar()
-    }
+class Reserva {
+  +idReserva: int
+  +inicio: datetime
+  +fin: datetime
+  +precioTotal: decimal
+  +estado: string
+  +paymentDeadline: datetime
+  +notas: string
+  +confirmar()
+  +modificar()
+  +cancelar()
+}
 
-    class Pago {
-        +idPago: int
-        +importe: decimal
-        +metodo: string
-        +estado: string
-        +fechaPago: datetime
-        +referenciaTransaccion: string
-        +numeroRecibo: string
-        +registrarPago()
-        +marcarFallido()
-        +marcarReembolsado()
-    }
+class HistorialReserva {
+  +idHistorial: int
+  +estado: string
+  +nota: string
+  +fechaEvento: datetime
+}
 
-    class Factura {
-        +idFactura: int
-        +numeroFactura: string
-        +tipoFactura: string
-        +subtotal: decimal
-        +impuestos: decimal
-        +total: decimal
-        +estado: string
-        +esReversion: boolean
-        +motivoCorreccion: string
-        +fechaEmision: datetime
-        +generar()
-        +revertir()
-        +sustituir()
-    }
+class Pago {
+  +idPago: int
+  +importe: decimal
+  +metodo: string
+  +estado: string
+  +fechaPago: datetime
+  +referenciaTransaccion: string
+  +numeroRecibo: string
+  +registrarPago()
+  +marcarFallido()
+  +marcarReembolsado()
+}
 
-    class DatosFacturacion {
-        +idDatosFacturacion: int
-        +razonSocial: string
-        +nifCif: string
-        +direccion: string
-        +ciudad: string
-        +pais: string
-        +esPredeterminado: boolean
-    }
+class DatosFacturacion {
+  +idDatosFacturacion: int
+  +razonSocial: string
+  +nifCif: string
+  +direccion: string
+  +ciudad: string
+  +pais: string
+  +esPredeterminado: boolean
+}
 
-    Usuario "1" --> "0..1" PerfilProfesional : puede tener
-    Usuario "1" --> "0..*" DatosFacturacion : registra
-    PerfilProfesional "1" --> "0..*" Servicio : ofrece
-    PerfilProfesional "1" --> "0..*" Disponibilidad : define
-    Usuario "1" --> "0..*" Reserva : realiza
-    PerfilProfesional "1" --> "0..*" Reserva : recibe
-    Servicio "1" --> "0..*" Reserva : se reserva en
-    Reserva "1" --> "0..*" Pago : genera
-    Reserva "1" --> "0..*" Factura : origina
-    Pago "0..*" --> "0..1" Factura : se vincula con
-    DatosFacturacion "1" --> "0..*" Factura : se usa en
-    Factura "0..1" --> "0..*" Factura : corrige
+class Factura {
+  +idFactura: int
+  +numeroFactura: string
+  +tipoFactura: string
+  +subtotal: decimal
+  +impuestos: decimal
+  +total: decimal
+  +estado: string
+  +esReversion: boolean
+  +motivoCorreccion: string
+  +fechaEmision: datetime
+  +generar()
+  +revertir()
+  +sustituir()
+}
+
+Usuario "1" --> "0..1" PerfilProfesional : puede tener
+Usuario "1" --> "0..*" Reserva : realiza
+PerfilProfesional "1" --> "0..*" Disponibilidad : define
+PerfilProfesional "1" --> "0..*" Servicio : ofrece
+PerfilProfesional "1" --> "0..*" Reserva : recibe
+Servicio "1" --> "0..*" Reserva : se reserva en
+Reserva "1" --> "0..*" HistorialReserva : registra
+Reserva "1" --> "0..1" Pago : genera
+Pago "1" --> "0..1" Factura : da lugar a
+DatosFacturacion "1" --> "0..*" Factura : se usa en
+Factura "0..1" --> "0..*" Factura : corrige

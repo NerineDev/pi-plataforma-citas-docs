@@ -6,14 +6,11 @@ erDiagram
         boolean active
     }
 
-    BILLING_DETAILS {
-        int billing_detail_id PK
+    PRO_PROFILES {
+        int pro_profile_id PK
         int user_id FK
-        string legal_name
-        string tax_id
-        string city
-        string country_code
-        boolean is_default
+        string display_name
+        string status
     }
 
     BOOKINGS {
@@ -28,10 +25,19 @@ erDiagram
         datetime payment_deadline
     }
 
+    BILLING_DETAILS {
+        int billing_detail_id PK
+        int user_id FK
+        string legal_name
+        string tax_id
+        string city
+        string country_code
+        boolean is_default
+    }
+
     PAYMENTS {
         int payment_id PK
         int booking_id FK
-        int invoice_id FK
         decimal amount
         string payment_method
         string status
@@ -49,13 +55,6 @@ erDiagram
         boolean is_reversal
         int reverses_invoice_id FK
         int replaces_invoice_id FK
-    }
-
-    PRO_PROFILES {
-        int pro_profile_id PK
-        int user_id FK
-        string display_name
-        string status
     }
 
     THREADS {
@@ -83,17 +82,12 @@ erDiagram
     }
 
     USERS ||--o{ BILLING_DETAILS : registra
+    BOOKINGS ||--o| PAYMENTS : genera
+    PAYMENTS ||--o| INVOICES : da_lugar_a
+    BILLING_DETAILS ||--o{ INVOICES : se_usa_en
     USERS ||--o{ THREADS : inicia
+    PRO_PROFILES ||--o{ THREADS : participa
+    BOOKINGS ||--o{ THREADS : puede_relacionar
+    THREADS ||--o{ MESSAGES : contiene
     USERS ||--o{ MESSAGES : envia
     USERS ||--o{ SUPPORT_TICKETS : abre
-
-    PRO_PROFILES ||--o{ THREADS : participa
-
-    BOOKINGS ||--o{ PAYMENTS : genera
-    BOOKINGS ||--o{ INVOICES : origina
-    BOOKINGS ||--o{ THREADS : puede_relacionar
-
-    PAYMENTS }o--o| INVOICES : se_vincula_con
-    BILLING_DETAILS ||--o{ INVOICES : se_usa_en
-
-    THREADS ||--o{ MESSAGES : contiene

@@ -62,4 +62,7 @@ Working documents used to organize the development:
 - `changelog.md` – Log of relevant changes in the documentation.
 - `decisiones.md` – Design and technical decisions.
 
+#License
+This repository is proprietary and all rights are reserved. The source code is not licensed for reuse, redistribution, modification, or derivative works without prior written permission.
+
 These files are **living documents** and can change as the project evolves.

@@ -1,29 +1,52 @@
 # Decisiones tomadas durante el proyecto
 
-Este documento recoge decisiones técnicas y de diseño que se van tomando a lo largo del desarrollo.
+Este documento recoge las decisiones técnicas y de alcance consolidadas durante el desarrollo del proyecto.
 
-## 1. Ámbito del proyecto
-- La plataforma se centrará inicialmente en el caso real de una psicoterapeuta autónoma.
-- Se añadirá un segundo perfil de ejemplo (consultoría) para demostrar generalidad.
-- El enfoque será multi-profesional, no limitado al ámbito terapéutico.
+## 1. Alcance funcional
+- El proyecto se plantea como una plataforma web de gestión de citas y servicios para profesionales autónomos y pequeñas empresas.
+- Aunque nació a partir de un caso real del ámbito terapéutico, no se limita a ese sector.
+- El MVP se centra en cubrir el flujo principal de exploración, reserva, pago y gestión básica profesional.
 
 ## 2. Estructura de repositorios
-- Repositorio público para documentación y entregas.
-- Repositorio privado para código y documentación técnica.
+- Se mantiene un repositorio público para documentación, entregas y material de apoyo.
+- El código fuente y la documentación técnica detallada permanecen en un repositorio privado para proteger la propiedad intelectual del proyecto.
 
-## 3. Tecnologías (pendiente de decisión final)
-- Frontend: HTML, CSS, JavaScript (posible React).
-- Backend: Node/Express o Python/FastAPI.
-- Base de datos: SQLite o PostgreSQL.
-- Pasarelas de pago: PayPal y Stripe (modo test).
+## 3. Stack tecnológico final
+- Frontend: HTML5, CSS3 y JavaScript en formato SPA sin framework.
+- Backend: Python con FastAPI, SQLAlchemy y Pydantic.
+- Base de datos: PostgreSQL.
+- Testing: pytest.
+- Herramientas de apoyo: Git/GitHub, Postman, Figma y Docker como apoyo opcional.
 
-## 4. Prioridades del MVP
-- Flujo completo de reserva con pago integrado.
-- Gestión de disponibilidad.
-- Panel básico del profesional.
-- Recordatorios automáticos por correo.
+## 4. Modelo general de arquitectura
+- Se adopta una arquitectura separada por capas: frontend SPA, API backend y base de datos PostgreSQL.
+- La autenticación se separa de la identidad base de usuario.
+- El sistema usa roles para diferenciar perfiles de cliente, profesional y administración.
+- El perfil público profesional se separa de los datos privados de facturación.
 
-## 5. Decisiones pospuestas
-- Inteligencia de agenda (secretaria virtual).
-- Módulo de tareas/seguimiento de cliente.
-- App móvil.
+## 5. Decisiones de modelado relevantes
+- La disponibilidad se modela como agenda recurrente y las reservas como tramos ocupados.
+- La disponibilidad visible se calcula a partir de agenda menos reservas, en lugar de almacenar huecos libres precalculados.
+- Los datos de facturación se mantienen separados del perfil público.
+- Las facturas se tratan como registros con trazabilidad, no como documentos libremente editables.
+- Los identificadores técnicos se mantienen en inglés en la implementación para conservar coherencia técnica.
+
+## 6. Pagos y facturación
+- Stripe se utiliza en modo test en el estado actual del MVP.
+- PayPal queda contemplado como integración posterior dentro del alcance ampliado.
+- Todo pago confirmado debe desembocar en la generación de su factura correspondiente dentro de la lógica del sistema.
+- El justificante visible para el usuario y la factura fiscal no se consideran la misma cosa.
+
+## 7. Alcance del MVP
+- Se prioriza el núcleo funcional completo antes que mejoras accesorias.
+- Se incluyen autenticación, perfil profesional, servicios, disponibilidad, reservas, pagos, facturas, mensajería y soporte en alcance MVP.
+- Se dejan fuera del MVP funcionalidades como reseñas, asistente conversacional, automatizaciones avanzadas, excepciones complejas de agenda, OAuth y panel admin ampliado.
+
+## 8. Decisiones pospuestas para futuras versiones
+- Login con Google OAuth.
+- Recordatorios automáticos reales por email.
+- Inteligencia de agenda y sugerencia automática de huecos.
+- Reseñas vinculadas a reservas reales.
+- Galería de imágenes por servicio.
+- Integraciones de pago adicionales según región.
+- Evolución del sistema de facturación hacia capas de cumplimiento más avanzadas.

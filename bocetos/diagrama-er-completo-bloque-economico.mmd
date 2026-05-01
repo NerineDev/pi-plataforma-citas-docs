@@ -1,4 +1,5 @@
 erDiagram
+
     USERS {
         int user_id PK
         string username
@@ -21,8 +22,8 @@ erDiagram
         datetime booking_start
         datetime booking_end
         decimal price_total
+        string currency_code
         string status
-        datetime payment_deadline
     }
 
     BILLING_DETAILS {
@@ -30,18 +31,11 @@ erDiagram
         int user_id FK
         string legal_name
         string tax_id
+        string address_line_1
         string city
+        string postal_code
         string country_code
         boolean is_default
-    }
-
-    PAYMENTS {
-        int payment_id PK
-        int booking_id FK
-        decimal amount
-        string payment_method
-        string status
-        string receipt_number
     }
 
     INVOICES {
@@ -50,6 +44,8 @@ erDiagram
         int billing_detail_id FK
         string invoice_number
         string invoice_type
+        decimal subtotal_amount
+        decimal tax_amount
         decimal total_amount
         string status
         boolean is_reversal
@@ -57,11 +53,23 @@ erDiagram
         int replaces_invoice_id FK
     }
 
+    PAYMENTS {
+        int payment_id PK
+        int booking_id FK
+        int invoice_id FK
+        decimal amount
+        string payment_method
+        string status
+        string receipt_number
+        datetime paid_at
+    }
+
     THREADS {
         int thread_id PK
         int user_id FK
         int pro_id FK
         int booking_id FK
+        string subject
         string status
     }
 
@@ -69,6 +77,7 @@ erDiagram
         int message_id PK
         int thread_id FK
         int sender_id FK
+        text body
         datetime sent_at
         boolean active
     }
@@ -77,17 +86,24 @@ erDiagram
         int ticket_id PK
         int user_id FK
         string subject
+        text description
         string status
         boolean active
     }
 
-    USERS ||--o{ BILLING_DETAILS : registra
-    BOOKINGS ||--o| PAYMENTS : genera
-    PAYMENTS ||--o| INVOICES : da_lugar_a
-    BILLING_DETAILS ||--o{ INVOICES : se_usa_en
-    USERS ||--o{ THREADS : inicia
-    PRO_PROFILES ||--o{ THREADS : participa
-    BOOKINGS ||--o{ THREADS : puede_relacionar
-    THREADS ||--o{ MESSAGES : contiene
-    USERS ||--o{ MESSAGES : envia
-    USERS ||--o{ SUPPORT_TICKETS : abre
+    USERS ||--o{ BILLING_DETAILS : stores
+    USERS ||--o{ BOOKINGS : makes
+    PRO_PROFILES ||--o{ BOOKINGS : receives
+
+    BOOKINGS ||--o{ PAYMENTS : generates
+    BOOKINGS ||--o{ INVOICES : generates
+    PAYMENTS }o--o| INVOICES : linked_to
+    BILLING_DETAILS ||--o{ INVOICES : used_for
+    INVOICES ||--o{ INVOICES : rectifies
+
+    USERS ||--o{ THREADS : starts
+    PRO_PROFILES ||--o{ THREADS : participates
+    BOOKINGS ||--o{ THREADS : relates_to
+    THREADS ||--o{ MESSAGES : contains
+    USERS ||--o{ MESSAGES : sends
+    USERS ||--o{ SUPPORT_TICKETS : opens

@@ -1,63 +1,80 @@
 classDiagram
-class Usuario {
-  +idUsuario: int
-  +username: string
-  +email: string
-  +idiomaPreferido: string
-  +activo: boolean
+
+class User {
+  +int user_id
+  +string username
+  +string email
+  +boolean active
 }
 
-class PerfilProfesional {
-  +idPerfil: int
-  +nombreVisible: string
-  +bio: string
-  +telefonoContacto: string
-  +ubicacion: string
-  +visible: boolean
-  +verificado: boolean
-  +estado: string
+class ProProfile {
+  +int pro_profile_id
+  +string display_name
+  +string status
 }
 
-class Disponibilidad {
-  +idDisponibilidad: int
-  +diaSemana: int
-  +horaInicio: time
-  +horaFin: time
-  +activa: boolean
+class Booking {
+  +int booking_id
+  +int client_user_id
+  +int pro_profile_id
+  +int service_id
+  +datetime booking_start
+  +datetime booking_end
+  +decimal price_total
+  +string currency_code
+  +string status
 }
 
-class Servicio {
-  +idServicio: int
-  +nombre: string
-  +duracionMin: int
-  +precioBase: decimal
-  +activo: boolean
+class BillingDetail {
+  +int billing_detail_id
+  +int user_id
+  +string legal_name
+  +string tax_id
+  +string address_line_1
+  +string city
+  +string postal_code
+  +string country_code
+  +boolean is_default
 }
 
-class Reserva {
-  +idReserva: int
-  +inicio: datetime
-  +fin: datetime
-  +precioTotal: decimal
-  +estado: string
-  +paymentDeadline: datetime
-  +notas: string
-  +confirmar()
-  +modificar()
-  +cancelar()
+class Payment {
+  +int payment_id
+  +int booking_id
+  +int invoice_id
+  +decimal amount
+  +string payment_method
+  +string status
+  +string receipt_number
+  +datetime paid_at
+  +register()
+  +mark_failed()
+  +mark_refunded()
 }
 
-class HistorialReserva {
-  +idHistorial: int
-  +estado: string
-  +nota: string
-  +fechaEvento: datetime
+class Invoice {
+  +int invoice_id
+  +int booking_id
+  +int billing_detail_id
+  +string invoice_number
+  +string invoice_type
+  +decimal subtotal_amount
+  +decimal tax_amount
+  +decimal total_amount
+  +string status
+  +boolean is_reversal
+  +int reverses_invoice_id
+  +int replaces_invoice_id
+  +datetime issued_at
+  +generate()
+  +download_pdf()
+  +send_email()
 }
 
-Usuario "1" --> "0..*" Reserva : realiza
-Usuario "1" --> "0..1" PerfilProfesional : puede tener
-PerfilProfesional "1" --> "0..*" Disponibilidad : define
-PerfilProfesional "1" --> "0..*" Servicio : ofrece
-PerfilProfesional "1" --> "0..*" Reserva : recibe
-Servicio "1" --> "0..*" Reserva : se reserva en
-Reserva "1" --> "0..*" HistorialReserva : registra
+User "1" --> "0..*" Booking : makes
+ProProfile "1" --> "0..*" Booking : receives
+User "1" --> "0..*" BillingDetail : stores
+Booking "1" --> "0..*" Payment : generates
+Booking "1" --> "0..*" Invoice : generates
+Payment "0..1" --> "0..1" Invoice : linked_to
+BillingDetail "1" --> "0..*" Invoice : used_for
+Invoice "0..1" --> "0..*" Invoice : rectifies_or_replaces
